@@ -1,7 +1,7 @@
 import subprocess
 import os,sys
 import importlib
-
+import json
 
 
 
@@ -20,13 +20,8 @@ def install(packages):
                 #the real code does filtering here
                 print (line.rstrip().decode('utf-8'))
 
-libs = {"numpy":"numpy",
-        "matplotlib":"matplotlib",
-        "skimage":"scikit-image",
-        "sklearn":"scikit-learn",
-        "cv2":"opencv-python",
-        "mnist":"python-mnist",
-        "scipy":"scipy"}
+with open("libraries.json") as json_file:
+    libs = json.load(json_file)
+    install(libs)
+    print("\nEnd of installing!")
 
-install(libs)
-print("\nEnd of installing!")

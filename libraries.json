@@ -1,0 +1,9 @@
+{
+    "numpy":"numpy",
+    "matplotlib":"matplotlib",
+    "skimage":"scikit-image",
+    "sklearn":"scikit-learn",
+    "cv2":"opencv-python",
+    "mnist":"python-mnist",
+    "scipy":"scipy"
+}
