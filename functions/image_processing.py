@@ -1,6 +1,8 @@
 from deskew import *
 from mnist_funcs import *
 from thinning import *
+import numpy as np
+import cv2
 
 def image_preprocessing(image):
     

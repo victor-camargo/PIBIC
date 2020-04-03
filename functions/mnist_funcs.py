@@ -1,8 +1,8 @@
 from mnist import MNIST
 import numpy as np
 
-def load_dataset(s="data"):
-    mndata = MNIST('../%s/'%s)
+def load_dataset(s=""):
+    mndata = MNIST('%s'%s)
     mndata.gz = True
     X_train, labels_train = map(np.array, mndata.load_training())
     X_test, labels_test = map(np.array, mndata.load_testing())
