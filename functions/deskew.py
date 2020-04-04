@@ -20,4 +20,4 @@ def deskew(image):
     affine = np.array([[1,0],[alpha,1]])
     ocenter = np.array(image.shape)/2.0
     offset = c-np.dot(affine,ocenter)
-    return interpolation.affine_transform(image,affine,offset=offset)
+    return interpolation.affine_transform(image,affine,offset=offset, output=np.uint8)
