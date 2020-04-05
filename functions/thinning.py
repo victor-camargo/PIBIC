@@ -4,12 +4,11 @@ import numpy as np
 import skimage.io as io
 
 
-def neighbours(x,y,image):
+def neighbours(x,y,img):
     "Return 8-neighbours of image point P1(x,y), in a clockwise order"
-    img = image
     x_1, y_1, x1, y1 = x-1, y-1, x+1, y+1
-    return [ img[x_1][y], img[x_1][y1], img[x][y1], img[x1][y1],     # P2,P3,P4,P5
-                img[x1][y], img[x1][y_1], img[x][y_1], img[x_1][y_1] ]    # P6,P7,P8,P9
+    return [ img[x-1][y], img[x-1][y+1], img[x][y+1], img[x+1][y+1],     # P2,P3,P4,P5
+                img[x+1][y], img[x+1][y-1], img[x][y-1], img[x-1][y-1] ]    # P6,P7,P8,P9
 
 def transitions(neighbours):
     "No. of 0,1 patterns (transitions from 0 to 1) in the ordered sequence"
@@ -45,7 +44,10 @@ def zhangSuen(image):
                     transitions(n) == 1 and      # Condition 2
                     P2 * P4 * P8 == 0 and       # Condition 3
                     P2 * P6 * P8 == 0):            # Condition 4
-                    changing2.append((x,y))    
+                    changing2.append((x,y))
+        
         for x, y in changing2: 
             Image_Thinned[x][y] = 0
+        
+        #Image_Thinned[changing2] = 0
     return Image_Thinned

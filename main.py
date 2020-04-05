@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append('./functions')
 
 from deskew import *
@@ -9,8 +10,11 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
 from sklearn import linear_model
 import sklearn.metrics as metrics
-from skimage.filters import threshold_otsu
+
 import timeit
+import threading
+import multiprocessing as mp
+
 
 def createModel(x,y):
     yp = OneHotEncoder()
@@ -24,41 +28,59 @@ def predict(model,x):
 
 def image_preprocessing(image):
     
-    #img = image.reshape(28,28) #Transforma vetor em uma imagem 28x28
-    desk = deskew(image) #Realiza a compensação dos digitos
-    #desk = cv2.normalize(desk, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1) #Normaliza a imagem para aplicar Otsu
+    desk = deskew(image.reshape(28,28)) #Realiza a compensação dos digitos
     ret, thresh = cv2.threshold(desk, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # limiariza usando Otsu
     skel= zhangSuen(thresh) # Aplica a esqueletonização rapida de Zhang-Suen
-    plt.imshow(skel, cmap='gray')
-    plt.show()
     return skel
 
-def process_entire_dataset(data):
-    processed = []
-    for i in range(len(data)):
-        processed.append(image_preprocessing(data[i].reshape(28,28)).flatten())
-    return np.array(processed)
+
+def process_entire_dataset(data, qu, index):
+    out = [image_preprocessing(image).flatten() for image in data]
+    qu.put(out)
+    #print("%d"%index)
 
 
-(X_train, labels_train), (X_test, labels_test) = load_dataset('./data/')
-print('dataset_lido')
-testing = X_train[:100]
-
-def measure():
-    return process_entire_dataset(testing)
-
-#timed = timeit.timeit(measure,number=1)
-#print(timed)
-image_preprocessing(testing[0].reshape(28,28))
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+    return wrapped
 
 
 
+def multiprocesses(data, num):
+    
+    chunks = np.array_split(data, num)
+    processes = list()
+    fila = mp.Queue()
+    
+    for i in range(num):
+        x = mp.Process(target=process_entire_dataset,args=(chunks[i],fila,i))
+        processes.append(x)
+        x.start()
 
+    for index, proc in enumerate(processes):
+        proc.join()
+        print(child.get())
+    
+    '''
+    fila = sorted(fila, key=lambda x:x[1])    
+    return np.vstack([np.array(data) for data, index in fila])
+    '''
 
-
-
-
-
+if __name__ == '__main__':
+    (X_train, labels_train), (X_test, labels_test) = load_dataset('./data/')
+    print('dataset_lido')
+    
+    testing = X_train[:100]
+    wrapped = wrapper(multiprocesses, testing, os.cpu_count())
+    timed = timeit.timeit(wrapped,number=1)
+    print(timed)
+    '''
+    X_train_processed = multiprocesses(X_train[:10000], os.cpu_count())
+    
+    plt.imshow(X_train_processed[0].reshape(28,28),cmap='gray')
+    plt.show()
+    '''
 
 '''
 model_unchanged = createModel(X_train, labels_train)#Cria classificador sem preprocessamento
