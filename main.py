@@ -34,10 +34,11 @@ def image_preprocessing(image):
     return skel
 
 
-def process_entire_dataset(data, qu, index):
+def process_entire_dataset(data):#, qu, index):
     out = [image_preprocessing(image).flatten() for image in data]
-    qu.put(out)
+    #qu.put(out)
     #print("%d"%index)
+    return out
 
 
 def wrapper(func, *args, **kwargs):
@@ -71,10 +72,15 @@ if __name__ == '__main__':
     (X_train, labels_train), (X_test, labels_test) = load_dataset('./data/')
     print('dataset_lido')
     
-    testing = X_train[:100]
-    wrapped = wrapper(multiprocesses, testing, os.cpu_count())
-    timed = timeit.timeit(wrapped,number=1)
-    print(timed)
+    #testing = X_train[:100]
+    #wrapped = wrapper(multiprocesses, testing, os.cpu_count())
+    #timed = timeit.timeit(wrapped,number=1)
+    #print(timed)
+    chunks = np.array_split(X_train[:10000], 4)
+    p = mp.Pool(processes=4)
+    data = p.map(process_entire_dataset, chunks)
+    p.close()
+    #print(data)
     '''
     X_train_processed = multiprocesses(X_train[:10000], os.cpu_count())
     
