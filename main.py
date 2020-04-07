@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 sys.path.append('./functions')
 
@@ -56,3 +57,18 @@ acc_test_proc = metrics.accuracy_score(predict(model_processed,test_processed),l
 
 print("Acuracia do treinamento(com preprocessamento): "+ str(acc_train_proc))
 print("Acuracia do teste(com preprocessamento): "+ str(acc_tes_proct))
+=======
+import sys
+sys.path.append('./functions')
+
+from image_processing import *
+
+
+(X_train, labels_train), (X_test, labels_test) = load_dataset('./data')
+print('Dataset obtido')
+print('Processando dataset...')
+dataset_train_processed = process_entire_dataset(X_train)
+dataset_test_processed = process_entire_dataset(X_test)
+
+# Incrementar classificador e resultados ao final
+>>>>>>> master
