@@ -25,5 +25,5 @@ acc_train_proc = metrics.accuracy_score(predict(model_processed,train_processed)
 acc_test_proc = metrics.accuracy_score(predict(model_processed,test_processed),labels_test)
 
 print("Acuracia do treinamento(com preprocessamento): "+ str(acc_train_proc))
-print("Acuracia do teste(com preprocessamento): "+ str(acc_tes_proct))
+print("Acuracia do teste(com preprocessamento): "+ str(acc_test_proc))
 
