@@ -1,8 +1,9 @@
 import numpy as np
-import cv2
 from scipy.ndimage import interpolation
 
-def moments(image):
+
+def deskew(image):
+
     c0,c1 = np.mgrid[:image.shape[0],:image.shape[1]] # A trick in numPy to create a mesh grid
     totalImage = np.sum(image) #sum of pixels
     m0 = np.sum(c0*image)/totalImage #mu_x
@@ -12,12 +13,8 @@ def moments(image):
     m01 = np.sum((c0-m0)*(c1-m1)*image)/totalImage #covariance(x,y)
     mu_vector = np.array([m0,m1]) # Notice that these are \mu_x, \mu_y respectively
     covariance_matrix = np.array([[m00,m01],[m01,m11]]) # Do you see a similarity between the covariance matrix
-    return mu_vector, covariance_matrix
-
-def deskew(image):
-    c,v = moments(image)
-    alpha = v[0,1]/v[0,0]
+    alpha = covariance_matrix[0,1]/covariance_matrix[0,0]
     affine = np.array([[1,0],[alpha,1]])
     ocenter = np.array(image.shape)/2.0
-    offset = c-np.dot(affine,ocenter)
+    offset = mu_vector-np.dot(affine,ocenter)
     return interpolation.affine_transform(image,affine,offset=offset, output=np.uint8)

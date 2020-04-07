@@ -1,13 +1,10 @@
 from mnist import MNIST
 import numpy as np
 
-<<<<<<< HEAD
-def load_dataset(path):
-    mndata = MNIST(path)
-=======
+
+
 def load_dataset(s=""):
     mndata = MNIST('%s'%s)
->>>>>>> master
     mndata.gz = True
     X_train, labels_train = map(np.array, mndata.load_training())
     X_test, labels_test = map(np.array, mndata.load_testing())
